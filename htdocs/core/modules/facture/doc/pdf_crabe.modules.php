@@ -1734,7 +1734,15 @@ class pdf_crabe extends ModelePDFFactures
 
 			$carac_client_name= pdfBuildThirdpartyName($thirdparty, $outputlangs);
 
-			$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->thirdparty,($usecontact?$object->contact:''),$usecontact,'target',$object);
+            		// utiliser l'adresse de la maison mère
+            		if( $usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT) ){
+                		$parent = new Societe($this->db);
+                		$parent->fetch($object->contact->socid);
+                		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$parent,($usecontact?$object->contact:''),$usecontact,'target',$object);
+            		}
+            		else {
+                		$carac_client=pdf_build_address($outputlangs,$this->emetteur,$object->thirdparty,($usecontact?$object->contact:''),$usecontact,'target',$object);
+            		}
 
 			// Show recipient
 			$widthrecbox=!empty($conf->global->MAIN_PDF_USE_ISO_LOCATION) ? 92 : 100;
